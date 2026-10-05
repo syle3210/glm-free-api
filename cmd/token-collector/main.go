@@ -403,6 +403,13 @@ func openTokenStore(dbPath string) (*tokenStore, error) {
 		db.Close()
 		return nil, err
 	}
+	// Unique index so --topup can safely ignore already-known tokens
+	if _, err := db.Exec(`CREATE UNIQUE INDEX IF NOT EXISTS idx_tokens_token ON tokens(token)`); err != nil {
+		db.Close()
+		return nil, err
+	}
+
+	stmt, err := db.Prepare(`INSERT OR IGNORE INTO tokens (token, batch) VALUES (?, ?)`)
 
 	stmt, err := db.Prepare(`INSERT INTO tokens (token, batch) VALUES (?, ?)`)
 	if err != nil {
