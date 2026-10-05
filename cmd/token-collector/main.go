@@ -82,6 +82,7 @@ var (
 	parallelFlag      = flag.Int("parallel", 0, "parallel workers (pages) on a single browser; 0 = prompt y/N")
 	blockTrackersFlag = flag.Bool("block-trackers", false, "enable URL allowlist filter to block trackers (off by default)")
 	noTUIFlag         = flag.Bool("no-tui", false, "disable TUI, use plain text output")
+	topupFlag         = flag.Bool("topup", false, "append to existing tokens.sqlite instead of wiping it")
 )
 
 // ---------- init: tune GC for throughput ----------
