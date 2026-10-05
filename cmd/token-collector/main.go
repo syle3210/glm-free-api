@@ -1359,11 +1359,15 @@ func run(tokenCount, batchCount, parallelWorkers int, headed bool) error {
 	}
 	defer browser.Close()
 
-	// Database path — start fresh. Also nuke WAL/SHM sidecar files.
+	// Database path.
+	// Without --topup we start fresh (wipe). With --topup we keep the live DB
+	// so the running API keeps its open handle and new tokens appear immediately.
 	dbPath := filepath.Join(".", "tokens.sqlite")
-	_ = os.Remove(dbPath)
-	_ = os.Remove(dbPath + "-wal")
-	_ = os.Remove(dbPath + "-shm")
+	if !*topupFlag {
+		_ = os.Remove(dbPath)
+		_ = os.Remove(dbPath + "-wal")
+		_ = os.Remove(dbPath + "-shm")
+	}
 
 	// Open DB once and keep it — avoids per-batch open/close/fsync.
 	ts, err := openTokenStore(dbPath)
